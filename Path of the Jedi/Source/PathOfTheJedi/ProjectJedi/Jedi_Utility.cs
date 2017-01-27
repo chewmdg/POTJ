@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using RimWorld;
 using Verse;
 using Verse.AI;
-using Verse.Sound;
 using UnityEngine;
 
 namespace PathOfTheJedi
 {
     static class Jedi_Utility
+    
     {
-        #region Misc
+ 
+      #region Misc
 
         public static List<ThingDef> allWeaponDefs = new List<ThingDef>();
 

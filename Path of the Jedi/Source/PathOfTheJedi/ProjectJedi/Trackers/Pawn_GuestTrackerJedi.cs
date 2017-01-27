@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
+using RimWorld.BaseGen;
 using UnityEngine;
 using Verse;
-using Verse.Sound;
+using Verse.AI;
+using Verse.AI.Group;
+
 
 namespace PathOfTheJedi
 {
-    public class Pawn_GuestTrackerJedi : IExposable
+    public class Pawn_GuestTracker : IExposable
     {
         private const int DefaultWaitInsteadOfEscapingTicks = 12500;
 
@@ -142,11 +145,11 @@ namespace PathOfTheJedi
             }
         }
 
-        public Pawn_GuestTrackerJedi()
+        public Pawn_GuestTracker()
         {
         }
 
-        public Pawn_GuestTrackerJedi(Pawn pawn)
+        public Pawn_GuestTracker(Pawn pawn)
         {
             this.pawn = pawn;
         }

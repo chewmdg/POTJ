@@ -1,7 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Verse;
 using Verse.Sound;
+using RimWorld;
+
 
 namespace PathOfTheJedi
 {

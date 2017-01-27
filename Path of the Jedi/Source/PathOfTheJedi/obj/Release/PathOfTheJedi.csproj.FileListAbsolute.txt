@@ -1,0 +1,7 @@
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Source\PathOfTheJedi\bin\PathOfTheJedi.dll.config
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Source\PathOfTheJedi\bin\PathOfTheJedi.dll
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Source\PathOfTheJedi\bin\PathOfTheJedi.pdb
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Source\PathOfTheJedi\obj\Release\PathOfTheJedi.dll
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Assemblies\PathOfTheJedi.dll.config
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Assemblies\PathOfTheJedi.dll
+C:\Users\Nathan\Documents\~Github\POTJ\Path of the Jedi\Source\PathOfTheJedi\obj\Release\PathOfTheJedi.csprojResolveAssemblyReference.cache

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PathOfTheJedi")]
-[assembly: AssemblyCopyright("Copyright © MasterAion")]
+[assembly: AssemblyCopyright("Copyright © MasterAion MasterAilan")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

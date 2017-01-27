@@ -41,19 +41,21 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Web.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Trackers\Pawn_GuestTrackerJedi.cs" />
+    <Compile Include="RecoilPattern.cs" />
+    <Compile Include="Verbs\ShiftVecReport.cs" />
+    <Compile Include="CompProperties_Charges.cs" />
+    <Compile Include="CompCharges.cs" />
+    <Compile Include="Jedi_Utility.cs" />
+    <Compile Include="Projectiles\ProjectilePropertiesJedi.cs" />
+    <Compile Include="Verbs\Verb_LaunchProjectileJedi.cs" />
+    <Compile Include="Verbs\VerbPropertiesJedi.cs" />
+    <Compile Include="Verbs\Verb_LaunchProjectile.cs" />
     <Compile Include="Defs\DamageDef_CR.cs" />
-    <Compile Include="Projectiles\Projectile.cs" />
+    <Compile Include="Projectiles\BulletJedi.cs" />
+    <Compile Include="Comps\Apparel.cs" />
+    <Compile Include="Trackers\Pawn_HealthTrackerJedi.cs" />
+    <Compile Include="Projectiles\ProjectileJedi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -61,11 +63,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>F:\~Modding\Rimworld\~Managed\~depends\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>F:\~Modding\Rimworld\~Managed\~depends\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

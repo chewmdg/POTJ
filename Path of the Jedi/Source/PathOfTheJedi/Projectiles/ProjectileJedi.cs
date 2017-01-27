@@ -6,9 +6,10 @@ using UnityEngine;
 using Verse;
 using Verse.Sound;
 
-namespace ProjectileJedi
+namespace PathOfTheJedi
 {
-    public abstract class Projectile : ThingWithComps
+    //Vanilla Projectile
+    public abstract class ProjectileJedi : ThingWithComps
     {
         private const float BasePawnInterceptChance = 0.4f;
         private const float PawnInterceptChanceFactor_LayingDown = 0.1f;
@@ -20,6 +21,8 @@ namespace ProjectileJedi
         private const float InterceptChanceFactor_VeryShort = 0.5f;
         private const float InterceptChanceFactor_Short = 0.75f;
 
+
+        public bool canFreeIntercept;
         protected Vector3 origin;
         protected Vector3 destination;
         protected Thing assignedTarget;
@@ -33,6 +36,13 @@ namespace ProjectileJedi
         private Sustainer ambientSustainer;
         private static List<IntVec3> checkedCells;
         private readonly static List<Thing> cellThingsFiltered;
+
+
+        //New variables
+        private const float treeCollisionChance = 0.5f; //Tree collision chance is multiplied by this factor
+        public float shotAngle;
+        public float shotHeight = 0f;
+        public float shotSpeed = -1f;
 
 
         protected IntVec3 DestinationCell
@@ -125,7 +135,7 @@ namespace ProjectileJedi
                     return;
                 }
                 this.interceptWallsInt = value;
-                if (!this.interceptWallsInt && this is Projectile_Explosive)
+                if (!interceptWallsInt && this is Projectile_Explosive)
                 {
                     Log.Message("Non interceptWallsInt explosive.");
                 }
@@ -162,13 +172,13 @@ namespace ProjectileJedi
             }
         }
 
-        static Projectile()
+        static ProjectileJedi()
         {
-            Projectile.checkedCells = new List<IntVec3>();
-            Projectile.cellThingsFiltered = new List<Thing>();
+            ProjectileJedi.checkedCells = new List<IntVec3>();
+            ProjectileJedi.cellThingsFiltered = new List<Thing>();
         }
 
-        protected Projectile()
+        protected ProjectileJedi()
         {
         }
 
@@ -276,13 +286,13 @@ namespace ProjectileJedi
             Vector3 vector31 = newExactPos - lastExactPos;
             Vector3 vector32 = vector31.normalized * 0.2f;
             int num = (int)(vector31.MagnitudeHorizontal() / 0.2f);
-            Projectile.checkedCells.Clear();
+            ProjectileJedi.checkedCells.Clear();
             int num1 = 0;
             while (true)
             {
                 vector3 = vector3 + vector32;
                 IntVec3 intVec32 = vector3.ToIntVec3();
-                if (!Projectile.checkedCells.Contains(intVec32))
+                if (!ProjectileJedi.checkedCells.Contains(intVec32))
                 {
                     if (this.CheckForFreeIntercept(intVec32))
                     {
@@ -292,7 +302,7 @@ namespace ProjectileJedi
                         }
                         return true;
                     }
-                    Projectile.checkedCells.Add(intVec32);
+                    ProjectileJedi.checkedCells.Add(intVec32);
                 }
                 if (DebugViewSettings.drawInterceptChecks)
                 {
@@ -317,9 +327,14 @@ namespace ProjectileJedi
             base.Comps_PostDraw();
         }
 
+        //Add new variables
         public override void ExposeData()
         {
             base.ExposeData();
+            if (Scribe.mode == LoadSaveMode.Saving && launcher != null && launcher.Destroyed)
+            {
+                launcher = null;
+            }
             Vector3 vector3 = new Vector3();
             Scribe_Values.LookValue<Vector3>(ref this.origin, "origin", vector3, false);
             Vector3 vector31 = new Vector3();
@@ -332,6 +347,12 @@ namespace ProjectileJedi
             Scribe_Values.LookValue<bool>(ref this.freeInterceptInt, "interceptRandomTargets", true, false);
             Scribe_Values.LookValue<bool>(ref this.landed, "landed", false, false);
             Scribe_References.LookReference<Thing>(ref this.neverInterceptTargetInt, "neverInterceptTarget", false);
+
+            //Here is where to add new variables
+            Scribe_Values.LookValue(ref canFreeIntercept, "canFreeIntercept", false, false);
+            Scribe_Values.LookValue(ref shotAngle, "shotAngle", 0f, true);
+            Scribe_Values.LookValue(ref shotAngle, "shotHeight", 0f, true);
+            Scribe_Values.LookValue(ref shotSpeed, "shotSpeed", 0f, true);
         }
 
         public void ForceInstantImpact()
@@ -381,36 +402,43 @@ namespace ProjectileJedi
                 this.Impact(this.assignedTarget);
                 return;
             }
-            Projectile.cellThingsFiltered.Clear();
+            ProjectileJedi.cellThingsFiltered.Clear();
             List<Thing> thingList = base.Position.GetThingList(base.Map);
             for (int i = 0; i < thingList.Count; i++)
             {
                 Pawn item = thingList[i] as Pawn;
                 if (item != null)
                 {
-                    Projectile.cellThingsFiltered.Add(item);
+                    ProjectileJedi.cellThingsFiltered.Add(item);
                 }
             }
-            if (Projectile.cellThingsFiltered.Count > 0)
+            if (ProjectileJedi.cellThingsFiltered.Count > 0)
             {
-                this.Impact(Projectile.cellThingsFiltered.RandomElement<Thing>());
+                this.Impact(ProjectileJedi.cellThingsFiltered.RandomElement<Thing>());
                 return;
             }
-            Projectile.cellThingsFiltered.Clear();
+            ProjectileJedi.cellThingsFiltered.Clear();
             for (int j = 0; j < thingList.Count; j++)
             {
                 Thing thing = thingList[j];
                 if (thing.def.fillPercent > 0f || thing.def.passability != Traversability.Standable)
                 {
-                    Projectile.cellThingsFiltered.Add(thing);
+                    ProjectileJedi.cellThingsFiltered.Add(thing);
                 }
             }
-            if (Projectile.cellThingsFiltered.Count <= 0)
+            if (ProjectileJedi.cellThingsFiltered.Count <= 0)
             {
                 this.Impact(null);
                 return;
             }
-            this.Impact(Projectile.cellThingsFiltered.RandomElement<Thing>());
+            this.Impact(ProjectileJedi.cellThingsFiltered.RandomElement<Thing>());
+        }
+
+        //Added new method, takes Vector3 destination as argument
+        public void LaunchVector3(Thing launcher, Vector3 origin, LocalTargetInfo targ, Vector3 target, Thing equipment = null)
+        {
+            destination = target;
+            Launch(launcher, origin, targ, equipment);
         }
 
         public void Launch(Thing launcher, LocalTargetInfo targ, Thing equipment = null)
@@ -445,46 +473,49 @@ namespace ProjectileJedi
             }
         }
 
+
         public override void Tick()
         {
             base.Tick();
-            if (this.landed)
+            if (landed)
             {
                 return;
             }
-            Vector3 exactPosition = this.ExactPosition;
-            Projectile projectile = this;
-            projectile.ticksToImpact = projectile.ticksToImpact - 1;
-            if (!this.ExactPosition.InBounds(base.Map))
+            Vector3 exactPosition = ExactPosition;
+            ticksToImpact--;
+            if (!ExactPosition.InBounds(base.Map))
             {
-                Projectile projectile1 = this;
-                projectile1.ticksToImpact = projectile1.ticksToImpact + 1;
-                base.Position = this.ExactPosition.ToIntVec3();
-                this.Destroy(DestroyMode.Vanish);
+                ticksToImpact++;
+                Position = ExactPosition.ToIntVec3();
+                Destroy(DestroyMode.Vanish);
                 return;
             }
-            if (this.CheckForFreeInterceptBetween(exactPosition, this.ExactPosition))
+            Vector3 exactPosition2 = ExactPosition;
+            if (!def.projectile.flyOverhead && canFreeIntercept &&
+                CheckForFreeInterceptBetween(exactPosition, exactPosition2))
             {
                 return;
             }
-            base.Position = this.ExactPosition.ToIntVec3();
-            if (this.ticksToImpact == 60 && Find.TickManager.CurTimeSpeed == TimeSpeed.Normal && this.def.projectile.soundImpactAnticipate != null)
+            Position = ExactPosition.ToIntVec3();
+            if (ticksToImpact == 60f && Find.TickManager.CurTimeSpeed == TimeSpeed.Normal &&
+                def.projectile.soundImpactAnticipate != null)
             {
-                this.def.projectile.soundImpactAnticipate.PlayOneShot(this);
+                def.projectile.soundImpactAnticipate.PlayOneShot(this);
             }
-            if (this.ticksToImpact > 0)
+            if (ticksToImpact <= 0)
             {
-                if (this.ambientSustainer != null)
+                if (DestinationCell.InBounds(base.Map))
                 {
-                    this.ambientSustainer.Maintain();
+                    Position = DestinationCell;
                 }
+                ImpactSomething();
                 return;
             }
-            if (this.DestinationCell.InBounds(base.Map))
+            if (ambientSustainer != null)
             {
-                base.Position = this.DestinationCell;
+                ambientSustainer.Maintain();
             }
-            this.ImpactSomething();
+
         }
     }
 }
